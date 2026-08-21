@@ -1,0 +1,486 @@
+C:\Users\bdxly\Desktop\FUlib\.venv\Scripts\python.exe C:\Users\bdxly\Desktop\HTS\纯数据驱动的PDEResConvLSTM\main.py
+Using device: cuda
+[采样成功] 按照间隔 dt ≈ 1.0s 筛选出 601 个时间点帧。
+Loaded 601 time steps from 0.0s to 600.0s.
+Spatial range: x = 0.004 ~ 1.499 (256 points)
+
+============================== [ Model Structure ] ==============================
+TempPredictor1D(
+  (encoder_k3): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(3,), stride=(1,), padding=(1,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (encoder_k5): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(5,), stride=(1,), padding=(2,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(5,), stride=(1,), padding=(2,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (encoder_k7): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(7,), stride=(1,), padding=(3,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(7,), stride=(1,), padding=(3,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (attention): CBAM1D(
+    (avg_pool): AdaptiveAvgPool1d(output_size=1)
+    (max_pool): AdaptiveMaxPool1d(output_size=1)
+    (fc): Sequential(
+      (0): Conv1d(384, 24, kernel_size=(1,), stride=(1,), bias=False)
+      (1): ReLU()
+      (2): Conv1d(24, 384, kernel_size=(1,), stride=(1,), bias=False)
+    )
+    (conv_spatial): Conv1d(2, 1, kernel_size=(7,), stride=(1,), padding=(3,), bias=False)
+  )
+  (decoder): Sequential(
+    (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,))
+    (1): ReLU()
+    (2): Conv1d(128, 20, kernel_size=(1,), stride=(1,))
+  )
+)
+=================================================================================
+
+================ [ Model Forward Flow & Shape Check ] ================
+0. Raw Input x shape                  : torch.Size([32, 20, 256]) (batch, input_steps, length)
+1. Unsqueezed Input (added Channel)    : torch.Size([32, 20, 1, 256]) (batch, input_steps, C_in=1, length)
+2. Multi-scale Encoder Outputs:
+   - Kernel K=3 Branch Output         : torch.Size([32, 128, 256])
+   - Kernel K=5 Branch Output         : torch.Size([32, 128, 256])
+   - Kernel K=7 Branch Output         : torch.Size([32, 128, 256])
+3. Concatenated Fused Hidden Feature  : torch.Size([32, 384, 256]) (batch, C_concat=384, length)
+4. After CBAM Attention Modulation    : torch.Size([32, 384, 256])
+5. Final Decoder Output               : torch.Size([32, 20, 256]) (batch, output_steps, length)
+======================================================================
+
+
+[提示] 开始训练...
+run time = 4.763514041900635
+Epoch 01: Train Loss=0.21699 | Val Loss=0.03979
+run time = 3.0218451023101807
+Epoch 02: Train Loss=0.03905 | Val Loss=0.02058
+run time = 2.8518471717834473
+Epoch 03: Train Loss=0.02341 | Val Loss=0.00798
+run time = 2.8510961532592773
+Epoch 04: Train Loss=0.01784 | Val Loss=0.00561
+run time = 3.080430269241333
+Epoch 05: Train Loss=0.01528 | Val Loss=0.00688
+run time = 2.8909010887145996
+Epoch 06: Train Loss=0.01385 | Val Loss=0.00523
+run time = 2.8628017902374268
+Epoch 07: Train Loss=0.01341 | Val Loss=0.00550
+run time = 2.9568655490875244
+Epoch 08: Train Loss=0.01194 | Val Loss=0.00393
+run time = 2.8904383182525635
+Epoch 09: Train Loss=0.01181 | Val Loss=0.00271
+run time = 3.528290271759033
+Epoch 10: Train Loss=0.01135 | Val Loss=0.00380
+run time = 3.129718780517578
+Epoch 11: Train Loss=0.01075 | Val Loss=0.00765
+run time = 2.9480719566345215
+Epoch 12: Train Loss=0.01098 | Val Loss=0.00434
+run time = 2.8666741847991943
+Epoch 13: Train Loss=0.01029 | Val Loss=0.00615
+run time = 2.8728952407836914
+Epoch 14: Train Loss=0.00986 | Val Loss=0.00591
+run time = 2.9829933643341064
+Epoch 15: Train Loss=0.00928 | Val Loss=0.00418
+run time = 2.9070186614990234
+Epoch 16: Train Loss=0.00958 | Val Loss=0.00430
+run time = 2.876793384552002
+Epoch 17: Train Loss=0.00957 | Val Loss=0.00202
+run time = 3.0551624298095703
+Epoch 18: Train Loss=0.00897 | Val Loss=0.00165
+run time = 3.080768585205078
+Epoch 19: Train Loss=0.00871 | Val Loss=0.00506
+run time = 3.1031501293182373
+Epoch 20: Train Loss=0.00909 | Val Loss=0.00625
+run time = 3.013624668121338
+Epoch 21: Train Loss=0.00864 | Val Loss=0.00670
+run time = 2.907111644744873
+Epoch 22: Train Loss=0.00850 | Val Loss=0.00435
+run time = 3.0489323139190674
+Epoch 23: Train Loss=0.00799 | Val Loss=0.00196
+run time = 3.0027215480804443
+Epoch 24: Train Loss=0.00820 | Val Loss=0.00146
+run time = 2.9027390480041504
+Epoch 25: Train Loss=0.00831 | Val Loss=0.00783
+run time = 2.840548276901245
+Epoch 26: Train Loss=0.00799 | Val Loss=0.00400
+run time = 2.8766846656799316
+Epoch 27: Train Loss=0.00763 | Val Loss=0.00131
+run time = 2.8557662963867188
+Epoch 28: Train Loss=0.00769 | Val Loss=0.00134
+run time = 2.9224233627319336
+Epoch 29: Train Loss=0.00768 | Val Loss=0.00435
+run time = 2.855058193206787
+Epoch 30: Train Loss=0.00767 | Val Loss=0.00211
+run time = 2.90777850151062
+Epoch 31: Train Loss=0.00742 | Val Loss=0.00391
+run time = 2.89066481590271
+Epoch 32: Train Loss=0.00779 | Val Loss=0.00584
+run time = 2.871009588241577
+Epoch 33: Train Loss=0.00716 | Val Loss=0.00456
+run time = 2.875889301300049
+Epoch 34: Train Loss=0.00728 | Val Loss=0.00543
+run time = 3.094876527786255
+Epoch 35: Train Loss=0.00766 | Val Loss=0.00443
+run time = 2.986891269683838
+Epoch 36: Train Loss=0.00711 | Val Loss=0.00602
+run time = 2.87688946723938
+Epoch 37: Train Loss=0.00738 | Val Loss=0.00425
+run time = 2.906581163406372
+Epoch 38: Train Loss=0.00706 | Val Loss=0.00375
+run time = 2.9072368144989014
+Epoch 39: Train Loss=0.00683 | Val Loss=0.00143
+run time = 2.906632661819458
+Epoch 40: Train Loss=0.00682 | Val Loss=0.00495
+run time = 2.894907236099243
+Epoch 41: Train Loss=0.00691 | Val Loss=0.00431
+run time = 2.9052982330322266
+Epoch 42: Train Loss=0.00692 | Val Loss=0.00143
+run time = 3.047680377960205
+Epoch 43: Train Loss=0.00642 | Val Loss=0.00144
+run time = 2.9122183322906494
+Epoch 44: Train Loss=0.00682 | Val Loss=0.00472
+run time = 3.1985883712768555
+Epoch 45: Train Loss=0.00687 | Val Loss=0.00205
+run time = 2.926384449005127
+Epoch 46: Train Loss=0.00673 | Val Loss=0.00272
+run time = 2.9362244606018066
+Epoch 47: Train Loss=0.00651 | Val Loss=0.00139
+run time = 2.9164576530456543
+Epoch 48: Train Loss=0.00667 | Val Loss=0.00290
+run time = 2.949308395385742
+Epoch 49: Train Loss=0.00613 | Val Loss=0.00134
+run time = 2.9111759662628174
+Epoch 50: Train Loss=0.00602 | Val Loss=0.00168
+run time = 2.9419639110565186
+Epoch 51: Train Loss=0.00603 | Val Loss=0.00151
+run time = 2.94183087348938
+Epoch 52: Train Loss=0.00596 | Val Loss=0.00120
+run time = 2.9532840251922607
+Epoch 53: Train Loss=0.00594 | Val Loss=0.00143
+run time = 2.9508793354034424
+Epoch 54: Train Loss=0.00588 | Val Loss=0.00129
+run time = 3.206611156463623
+Epoch 55: Train Loss=0.00584 | Val Loss=0.00134
+run time = 3.198990821838379
+Epoch 56: Train Loss=0.00583 | Val Loss=0.00123
+run time = 3.4331634044647217
+Epoch 57: Train Loss=0.00574 | Val Loss=0.00121
+run time = 3.157222032546997
+Epoch 58: Train Loss=0.00576 | Val Loss=0.00123
+run time = 2.947101593017578
+Epoch 59: Train Loss=0.00571 | Val Loss=0.00132
+run time = 2.9184088706970215
+Epoch 60: Train Loss=0.00571 | Val Loss=0.00111
+run time = 2.9657740592956543
+Epoch 61: Train Loss=0.00562 | Val Loss=0.00110
+run time = 2.9044816493988037
+Epoch 62: Train Loss=0.00562 | Val Loss=0.00167
+run time = 2.9047441482543945
+Epoch 63: Train Loss=0.00559 | Val Loss=0.00102
+run time = 2.9685211181640625
+Epoch 64: Train Loss=0.00553 | Val Loss=0.00104
+run time = 2.927912712097168
+Epoch 65: Train Loss=0.00552 | Val Loss=0.00201
+run time = 2.939443826675415
+Epoch 66: Train Loss=0.00548 | Val Loss=0.00106
+run time = 2.9196062088012695
+Epoch 67: Train Loss=0.00539 | Val Loss=0.00157
+run time = 2.944287061691284
+Epoch 68: Train Loss=0.00539 | Val Loss=0.00163
+run time = 2.9493966102600098
+Epoch 69: Train Loss=0.00534 | Val Loss=0.00129
+run time = 2.924288272857666
+Epoch 70: Train Loss=0.00536 | Val Loss=0.00169
+run time = 2.9261040687561035
+Epoch 71: Train Loss=0.00529 | Val Loss=0.00116
+run time = 2.9419260025024414
+Epoch 72: Train Loss=0.00522 | Val Loss=0.00128
+run time = 2.916238784790039
+Epoch 73: Train Loss=0.00524 | Val Loss=0.00123
+run time = 2.939613103866577
+Epoch 74: Train Loss=0.00518 | Val Loss=0.00123
+run time = 2.930537462234497
+Epoch 75: Train Loss=0.00518 | Val Loss=0.00158
+run time = 2.945448160171509
+Epoch 76: Train Loss=0.00509 | Val Loss=0.00178
+run time = 2.953336715698242
+Epoch 77: Train Loss=0.00523 | Val Loss=0.00210
+run time = 2.9872381687164307
+Epoch 78: Train Loss=0.00502 | Val Loss=0.00258
+run time = 2.9704604148864746
+Epoch 79: Train Loss=0.00506 | Val Loss=0.00114
+run time = 2.9536361694335938
+Epoch 80: Train Loss=0.00502 | Val Loss=0.00274
+run time = 3.095005750656128
+Epoch 81: Train Loss=0.00496 | Val Loss=0.00143
+run time = 3.319164991378784
+Epoch 82: Train Loss=0.00497 | Val Loss=0.00316
+run time = 2.982203245162964
+Epoch 83: Train Loss=0.00490 | Val Loss=0.00111
+run time = 3.2136647701263428
+Epoch 84: Train Loss=0.00483 | Val Loss=0.00125
+run time = 2.9887142181396484
+Epoch 85: Train Loss=0.00474 | Val Loss=0.00103
+run time = 3.009889841079712
+Epoch 86: Train Loss=0.00471 | Val Loss=0.00105
+run time = 3.256193161010742
+Epoch 87: Train Loss=0.00472 | Val Loss=0.00107
+run time = 2.9534096717834473
+Epoch 88: Train Loss=0.00470 | Val Loss=0.00123
+run time = 2.9451634883880615
+Epoch 89: Train Loss=0.00470 | Val Loss=0.00127
+run time = 2.977463722229004
+Epoch 90: Train Loss=0.00467 | Val Loss=0.00096
+run time = 2.9359753131866455
+Epoch 91: Train Loss=0.00465 | Val Loss=0.00133
+run time = 2.9315848350524902
+Epoch 92: Train Loss=0.00460 | Val Loss=0.00093
+run time = 3.507960796356201
+Epoch 93: Train Loss=0.00461 | Val Loss=0.00132
+run time = 3.091087818145752
+Epoch 94: Train Loss=0.00461 | Val Loss=0.00145
+run time = 3.1494994163513184
+Epoch 95: Train Loss=0.00457 | Val Loss=0.00098
+run time = 3.4040727615356445
+Epoch 96: Train Loss=0.00456 | Val Loss=0.00117
+run time = 4.832512378692627
+Epoch 97: Train Loss=0.00452 | Val Loss=0.00105
+run time = 5.159754276275635
+Epoch 98: Train Loss=0.00452 | Val Loss=0.00142
+run time = 3.2647321224212646
+Epoch 99: Train Loss=0.00452 | Val Loss=0.00093
+run time = 3.0500190258026123
+Epoch 100: Train Loss=0.00450 | Val Loss=0.00106
+run time = 2.89876389503479
+Epoch 101: Train Loss=0.00452 | Val Loss=0.00131
+run time = 2.9208481311798096
+Epoch 102: Train Loss=0.00449 | Val Loss=0.00144
+run time = 2.9355013370513916
+Epoch 103: Train Loss=0.00448 | Val Loss=0.00122
+run time = 2.9415855407714844
+Epoch 104: Train Loss=0.00448 | Val Loss=0.00103
+run time = 2.920405864715576
+Epoch 105: Train Loss=0.00442 | Val Loss=0.00096
+run time = 2.940164566040039
+Epoch 106: Train Loss=0.00439 | Val Loss=0.00097
+run time = 2.9805760383605957
+Epoch 107: Train Loss=0.00441 | Val Loss=0.00113
+run time = 2.9113125801086426
+Epoch 108: Train Loss=0.00441 | Val Loss=0.00105
+run time = 3.099046468734741
+Epoch 109: Train Loss=0.00440 | Val Loss=0.00187
+run time = 3.023080348968506
+Epoch 110: Train Loss=0.00438 | Val Loss=0.00148
+run time = 3.1002540588378906
+Epoch 111: Train Loss=0.00435 | Val Loss=0.00107
+run time = 2.9805309772491455
+Epoch 112: Train Loss=0.00434 | Val Loss=0.00163
+run time = 3.257519483566284
+Epoch 113: Train Loss=0.00434 | Val Loss=0.00126
+run time = 3.1074459552764893
+Epoch 114: Train Loss=0.00433 | Val Loss=0.00102
+run time = 3.062596082687378
+Epoch 115: Train Loss=0.00427 | Val Loss=0.00155
+run time = 3.0473756790161133
+Epoch 116: Train Loss=0.00427 | Val Loss=0.00106
+run time = 2.9912173748016357
+Epoch 117: Train Loss=0.00425 | Val Loss=0.00114
+run time = 3.1401784420013428
+Epoch 118: Train Loss=0.00422 | Val Loss=0.00113
+run time = 3.1321282386779785
+Epoch 119: Train Loss=0.00423 | Val Loss=0.00104
+run time = 2.98868727684021
+Epoch 120: Train Loss=0.00429 | Val Loss=0.00196
+run time = 3.0131545066833496
+Epoch 121: Train Loss=0.00421 | Val Loss=0.00121
+run time = 2.991116762161255
+Epoch 122: Train Loss=0.00420 | Val Loss=0.00097
+run time = 3.042602777481079
+Epoch 123: Train Loss=0.00416 | Val Loss=0.00099
+run time = 3.052553415298462
+Epoch 124: Train Loss=0.00415 | Val Loss=0.00107
+run time = 3.0966482162475586
+Epoch 125: Train Loss=0.00415 | Val Loss=0.00144
+run time = 3.1087536811828613
+Epoch 126: Train Loss=0.00417 | Val Loss=0.00097
+run time = 3.0311784744262695
+Epoch 127: Train Loss=0.00414 | Val Loss=0.00094
+run time = 3.2416629791259766
+Epoch 128: Train Loss=0.00412 | Val Loss=0.00097
+run time = 3.1584973335266113
+Epoch 129: Train Loss=0.00412 | Val Loss=0.00107
+run time = 3.03359317779541
+Epoch 130: Train Loss=0.00412 | Val Loss=0.00143
+run time = 3.0171570777893066
+Epoch 131: Train Loss=0.00411 | Val Loss=0.00129
+run time = 3.059763193130493
+Epoch 132: Train Loss=0.00410 | Val Loss=0.00113
+run time = 3.054487705230713
+Epoch 133: Train Loss=0.00409 | Val Loss=0.00139
+run time = 3.1631031036376953
+Epoch 134: Train Loss=0.00411 | Val Loss=0.00145
+run time = 3.158644199371338
+Epoch 135: Train Loss=0.00409 | Val Loss=0.00088
+run time = 2.967228889465332
+Epoch 136: Train Loss=0.00409 | Val Loss=0.00098
+run time = 3.087484121322632
+Epoch 137: Train Loss=0.00408 | Val Loss=0.00101
+run time = 3.219548463821411
+Epoch 138: Train Loss=0.00408 | Val Loss=0.00103
+run time = 3.273045063018799
+Epoch 139: Train Loss=0.00405 | Val Loss=0.00098
+run time = 3.5694186687469482
+Epoch 140: Train Loss=0.00404 | Val Loss=0.00106
+run time = 3.113119602203369
+Epoch 141: Train Loss=0.00403 | Val Loss=0.00098
+run time = 3.0184266567230225
+Epoch 142: Train Loss=0.00406 | Val Loss=0.00117
+run time = 3.1510872840881348
+Epoch 143: Train Loss=0.00404 | Val Loss=0.00123
+run time = 3.132571220397949
+Epoch 144: Train Loss=0.00404 | Val Loss=0.00168
+run time = 3.127189874649048
+Epoch 145: Train Loss=0.00404 | Val Loss=0.00097
+run time = 3.1086833477020264
+Epoch 146: Train Loss=0.00402 | Val Loss=0.00105
+run time = 3.0341532230377197
+Epoch 147: Train Loss=0.00403 | Val Loss=0.00101
+run time = 2.9932541847229004
+Epoch 148: Train Loss=0.00399 | Val Loss=0.00128
+run time = 3.071537733078003
+Epoch 149: Train Loss=0.00397 | Val Loss=0.00111
+run time = 3.05552339553833
+Epoch 150: Train Loss=0.00399 | Val Loss=0.00101
+run time = 3.0023016929626465
+Epoch 151: Train Loss=0.00396 | Val Loss=0.00094
+run time = 3.4692769050598145
+Epoch 152: Train Loss=0.00396 | Val Loss=0.00095
+run time = 3.15574312210083
+Epoch 153: Train Loss=0.00393 | Val Loss=0.00120
+run time = 3.0095088481903076
+Epoch 154: Train Loss=0.00395 | Val Loss=0.00112
+run time = 3.00258731842041
+Epoch 155: Train Loss=0.00391 | Val Loss=0.00099
+run time = 3.0750460624694824
+Epoch 156: Train Loss=0.00393 | Val Loss=0.00124
+run time = 3.0518407821655273
+Epoch 157: Train Loss=0.00392 | Val Loss=0.00125
+run time = 2.9878337383270264
+Epoch 158: Train Loss=0.00391 | Val Loss=0.00103
+run time = 2.9783315658569336
+Epoch 159: Train Loss=0.00390 | Val Loss=0.00098
+run time = 3.045872211456299
+Epoch 160: Train Loss=0.00391 | Val Loss=0.00125
+run time = 3.0520050525665283
+Epoch 161: Train Loss=0.00388 | Val Loss=0.00104
+run time = 3.0259029865264893
+Epoch 162: Train Loss=0.00390 | Val Loss=0.00110
+run time = 3.015747308731079
+Epoch 163: Train Loss=0.00389 | Val Loss=0.00111
+run time = 2.981294631958008
+Epoch 164: Train Loss=0.00387 | Val Loss=0.00107
+run time = 2.999943971633911
+Epoch 165: Train Loss=0.00389 | Val Loss=0.00113
+run time = 3.1648545265197754
+Epoch 166: Train Loss=0.00387 | Val Loss=0.00108
+run time = 2.9809553623199463
+Epoch 167: Train Loss=0.00385 | Val Loss=0.00128
+run time = 2.979621171951294
+Epoch 168: Train Loss=0.00387 | Val Loss=0.00110
+run time = 2.9999256134033203
+Epoch 169: Train Loss=0.00386 | Val Loss=0.00106
+run time = 3.186925172805786
+Epoch 170: Train Loss=0.00386 | Val Loss=0.00134
+run time = 3.2786591053009033
+Epoch 171: Train Loss=0.00387 | Val Loss=0.00102
+run time = 3.016371965408325
+Epoch 172: Train Loss=0.00386 | Val Loss=0.00117
+run time = 3.0790255069732666
+Epoch 173: Train Loss=0.00386 | Val Loss=0.00110
+run time = 3.521289825439453
+Epoch 174: Train Loss=0.00384 | Val Loss=0.00103
+run time = 3.071279287338257
+Epoch 175: Train Loss=0.00384 | Val Loss=0.00107
+run time = 3.091895818710327
+Epoch 176: Train Loss=0.00382 | Val Loss=0.00106
+run time = 3.032658338546753
+Epoch 177: Train Loss=0.00384 | Val Loss=0.00117
+run time = 2.987091064453125
+Epoch 178: Train Loss=0.00385 | Val Loss=0.00115
+run time = 3.020383596420288
+Epoch 179: Train Loss=0.00383 | Val Loss=0.00100
+run time = 2.9819345474243164
+Epoch 180: Train Loss=0.00382 | Val Loss=0.00103
+run time = 3.0375945568084717
+Epoch 181: Train Loss=0.00383 | Val Loss=0.00107
+run time = 3.075183391571045
+Epoch 182: Train Loss=0.00381 | Val Loss=0.00109
+run time = 2.9911422729492188
+Epoch 183: Train Loss=0.00382 | Val Loss=0.00108
+run time = 3.1305606365203857
+Epoch 184: Train Loss=0.00383 | Val Loss=0.00103
+run time = 3.146056890487671
+Epoch 185: Train Loss=0.00381 | Val Loss=0.00103
+run time = 3.0769941806793213
+Epoch 186: Train Loss=0.00381 | Val Loss=0.00107
+run time = 3.0013413429260254
+Epoch 187: Train Loss=0.00379 | Val Loss=0.00119
+run time = 3.021095037460327
+Epoch 188: Train Loss=0.00382 | Val Loss=0.00112
+run time = 3.011169195175171
+Epoch 189: Train Loss=0.00382 | Val Loss=0.00108
+run time = 3.020879030227661
+Epoch 190: Train Loss=0.00381 | Val Loss=0.00110
+run time = 3.070291519165039
+Epoch 191: Train Loss=0.00379 | Val Loss=0.00106
+run time = 2.991283416748047
+Epoch 192: Train Loss=0.00381 | Val Loss=0.00106
+run time = 3.000425338745117
+Epoch 193: Train Loss=0.00380 | Val Loss=0.00117
+run time = 3.379786252975464
+Epoch 194: Train Loss=0.00380 | Val Loss=0.00104
+run time = 2.9934675693511963
+Epoch 195: Train Loss=0.00378 | Val Loss=0.00114
+run time = 2.9780092239379883
+Epoch 196: Train Loss=0.00379 | Val Loss=0.00108
+run time = 3.0129709243774414
+Epoch 197: Train Loss=0.00377 | Val Loss=0.00105
+run time = 3.1657605171203613
+Epoch 198: Train Loss=0.00380 | Val Loss=0.00111
+run time = 3.1485142707824707
+Epoch 199: Train Loss=0.00379 | Val Loss=0.00113
+run time = 3.2215938568115234
+Epoch 200: Train Loss=0.00379 | Val Loss=0.00102
+
+Test Results: Loss=0.00120, MSE=0.00002, MAE=0.00293
+
+[提示] 请求的起始点 (1000) 已超出或接近已知数据总步数 (601)。
+[提示] 自动激活【自回归迭代推演 (Autoregressive Rollout)】模式...
+ -> 初始已知真实数据截止于: t = 600.00s (第 601 步)
+ -> 已通过自回归连续迭代推演至未来的状态: t ≈ 1039.00s (第 1040 步)
+自回归外推结果图已保存至: ./outputs\autoregressive_pred_step1040.png
+
+进程已结束，退出代码为 0

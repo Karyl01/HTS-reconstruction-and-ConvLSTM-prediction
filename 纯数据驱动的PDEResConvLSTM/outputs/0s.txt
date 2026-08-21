@@ -1,0 +1,192 @@
+C:\Users\bdxly\Desktop\FUlib\.venv\Scripts\python.exe C:\Users\bdxly\Desktop\HTS\纯数据驱动的PDEResConvLSTM\main.py
+Using device: cuda
+[采样成功] 按照间隔 dt ≈ 1.0s 筛选出 601 个时间点帧。
+Loaded 601 time steps from 0.0s to 600.0s.
+Spatial range: x = 0.004 ~ 1.499 (256 points)
+
+============================== [ Model Structure ] ==============================
+TempPredictor1D(
+  (encoder_k3): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(3,), stride=(1,), padding=(1,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (encoder_k5): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(5,), stride=(1,), padding=(2,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(5,), stride=(1,), padding=(2,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (encoder_k7): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(7,), stride=(1,), padding=(3,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(7,), stride=(1,), padding=(3,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (attention): CBAM1D(
+    (avg_pool): AdaptiveAvgPool1d(output_size=1)
+    (max_pool): AdaptiveMaxPool1d(output_size=1)
+    (fc): Sequential(
+      (0): Conv1d(384, 24, kernel_size=(1,), stride=(1,), bias=False)
+      (1): ReLU()
+      (2): Conv1d(24, 384, kernel_size=(1,), stride=(1,), bias=False)
+    )
+    (conv_spatial): Conv1d(2, 1, kernel_size=(7,), stride=(1,), padding=(3,), bias=False)
+  )
+  (decoder): Sequential(
+    (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,))
+    (1): ReLU()
+    (2): Conv1d(128, 20, kernel_size=(1,), stride=(1,))
+  )
+)
+=================================================================================
+
+================ [ Model Forward Flow & Shape Check ] ================
+0. Raw Input x shape                  : torch.Size([32, 20, 256]) (batch, input_steps, length)
+1. Unsqueezed Input (added Channel)    : torch.Size([32, 20, 1, 256]) (batch, input_steps, C_in=1, length)
+2. Multi-scale Encoder Outputs:
+   - Kernel K=3 Branch Output         : torch.Size([32, 128, 256])
+   - Kernel K=5 Branch Output         : torch.Size([32, 128, 256])
+   - Kernel K=7 Branch Output         : torch.Size([32, 128, 256])
+3. Concatenated Fused Hidden Feature  : torch.Size([32, 384, 256]) (batch, C_concat=384, length)
+4. After CBAM Attention Modulation    : torch.Size([32, 384, 256])
+5. Final Decoder Output               : torch.Size([32, 20, 256]) (batch, output_steps, length)
+======================================================================
+
+
+[提示] 检测到已保存的模型 './checkpoints\best_model.pth'，直接加载进行推理。
+
+========================= [ Test Set Precision Metrics ] =========================
+  Metric               | Value
+-----------------------------------------------------------------
+  MAE (K)              | 0.9005
+  RMSE (K)             | 1.2054
+  MAPE (%)             | 0.9713%
+  R² Score             | 0.999839
+  Peak Error (K)       | 5.6301
+=================================================================
+
+
+[提示] 起始点 (1000) 已超出或接近已知数据总步数 (601)。
+[提示] 自动激活【自回归迭代推演 (Autoregressive Rollout)】模式...
+ -> 已通过自回归推演至未来状态: t ≈ 1039.00s (第 1040 步)
+自回归外推结果图已保存至: ./outputs\autoregressive_pred_step1040.png
+Using device: cuda
+[采样成功] 按照间隔 dt ≈ 1.0s 筛选出 601 个时间点帧。
+Loaded 601 time steps from 0.0s to 600.0s.
+Spatial range: x = 0.004 ~ 1.499 (256 points)
+
+============================== [ Model Structure ] ==============================
+TempPredictor1D(
+  (encoder_k3): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(3,), stride=(1,), padding=(1,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(3,), stride=(1,), padding=(1,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (encoder_k5): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(5,), stride=(1,), padding=(2,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(5,), stride=(1,), padding=(2,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (encoder_k7): ConvLSTM1D(
+    (cells): ModuleList(
+      (0): ConvLSTM1DCell(
+        (conv): Conv1d(65, 256, kernel_size=(7,), stride=(1,), padding=(3,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+      (1): ConvLSTM1DCell(
+        (conv): Conv1d(192, 512, kernel_size=(7,), stride=(1,), padding=(3,))
+        (dropout_layer): Dropout(p=0.3, inplace=False)
+      )
+    )
+  )
+  (attention): CBAM1D(
+    (avg_pool): AdaptiveAvgPool1d(output_size=1)
+    (max_pool): AdaptiveMaxPool1d(output_size=1)
+    (fc): Sequential(
+      (0): Conv1d(384, 24, kernel_size=(1,), stride=(1,), bias=False)
+      (1): ReLU()
+      (2): Conv1d(24, 384, kernel_size=(1,), stride=(1,), bias=False)
+    )
+    (conv_spatial): Conv1d(2, 1, kernel_size=(7,), stride=(1,), padding=(3,), bias=False)
+  )
+  (decoder): Sequential(
+    (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,))
+    (1): ReLU()
+    (2): Conv1d(128, 20, kernel_size=(1,), stride=(1,))
+  )
+)
+=================================================================================
+
+================ [ Model Forward Flow & Shape Check ] ================
+0. Raw Input x shape                  : torch.Size([32, 20, 256]) (batch, input_steps, length)
+1. Unsqueezed Input (added Channel)    : torch.Size([32, 20, 1, 256]) (batch, input_steps, C_in=1, length)
+2. Multi-scale Encoder Outputs:
+   - Kernel K=3 Branch Output         : torch.Size([32, 128, 256])
+   - Kernel K=5 Branch Output         : torch.Size([32, 128, 256])
+   - Kernel K=7 Branch Output         : torch.Size([32, 128, 256])
+3. Concatenated Fused Hidden Feature  : torch.Size([32, 384, 256]) (batch, C_concat=384, length)
+4. After CBAM Attention Modulation    : torch.Size([32, 384, 256])
+5. Final Decoder Output               : torch.Size([32, 20, 256]) (batch, output_steps, length)
+======================================================================
+
+
+[提示] 检测到已保存的模型 './checkpoints\best_model.pth'，直接加载进行推理。
+
+========================= [ Test Set Precision Metrics ] =========================
+  Metric               | Value
+-----------------------------------------------------------------
+  MAE (K)              | 0.9005
+  RMSE (K)             | 1.2054
+  MAPE (%)             | 0.9713%
+  R² Score             | 0.999839
+  Peak Error (K)       | 5.6301
+=================================================================
+
+
+[多步验证] 输入历史数据: t = 0.00s ~ 19.00s (共 20 步)
+[多步验证] 预测未来区间: t = 20.00s ~ 39.00s (共 20 步)
+-------------------------------------------------------
+  MAE        : 0.4149 K
+  RMSE       : 0.5834 K
+  MAPE       : 0.4299 %
+  R² Score   : 0.999956
+  Peak Error : 2.5755 K
+-------------------------------------------------------
+20步对比子图网格已保存至: ./outputs\multi_step_subplots_t0.png
+2D时空热力图与误差图已保存至: ./outputs\multi_step_heatmap_t0.png
+
+进程已结束，退出代码为 0
